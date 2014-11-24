@@ -399,6 +399,10 @@ dio_input(void)
       PRINTF("RPL: Copying prefix information\n");
       memcpy(&dio.prefix_info.prefix, &buffer[i + 16], 16);
       break;
+    case RPL_OPTION_NODE_MOBILITY:
+      /*TODO: */
+      
+      break;
     default:
       PRINTF("RPL: Unsupported suboption type in DIO: %u\n",
 	(unsigned)subopt_type);
@@ -533,6 +537,12 @@ dio_output(rpl_instance_t *instance, uip_ipaddr_t *uc_addr)
     PRINTF("RPL: No prefix to announce (len %d)\n",
            dag->prefix_info.length);
   }
+
+  /*TODO:Gopi's code change to add Mobility information as an option*/
+  buffer[pos++] = RPL_OPTION_NODE_MOBILITY;
+  buffer[pos++] = 1;
+  buffer[pos++] = RPL_NODE_MOBILE;
+
 
 #if RPL_LEAF_ONLY
 #if (DEBUG) & DEBUG_PRINT

@@ -548,6 +548,8 @@ rpl_add_parent(rpl_dag_t *dag, rpl_dio_t *dio, uip_ipaddr_t *addr)
     p->dag = dag;
     p->rank = dio->rank;
     p->dtsn = dio->dtsn;
+/*TODO:Gopi's code change to support mobile node information in PP selection process*/
+    p->mobile_node = dio->mobile_node;
     p->link_metric = RPL_INIT_LINK_METRIC * RPL_DAG_MC_ETX_DIVISOR;
 #if RPL_DAG_MC != RPL_DAG_MC_NONE
     memcpy(&p->mc, &dio->mc, sizeof(p->mc));

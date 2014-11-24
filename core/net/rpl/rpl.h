@@ -117,6 +117,8 @@ struct rpl_parent {
   uint16_t link_metric;
   uint8_t dtsn;
   uint8_t updated;
+  /*TODO: Gopi's change to indicate whether a parent is mobile or not*/
+  uint8_t mobile_node;
 };
 typedef struct rpl_parent rpl_parent_t;
 /*---------------------------------------------------------------------------*/
