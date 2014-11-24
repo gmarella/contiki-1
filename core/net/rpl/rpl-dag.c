@@ -70,6 +70,21 @@ static rpl_of_t * const objective_functions[] = {&RPL_OF};
 #define RPL_GROUNDED                    RPL_CONF_GROUNDED
 #endif /* !RPL_CONF_GROUNDED */
 
+
+/*TODO: Gopi's changes for Dynamic DIS management*/
+uint8_t RPL_DIS_PERIOD = 60;
+/* The number of times that PP(prefrred parent) must change so that DIS = DIS/2 */
+#define N_DOWN_DIS 1
+/*The number of times that PP(Preferred parent) must change so that DIS = DIS*2 */
+#define N_UP_DIS 5
+#define I_DIS_MIN 3 
+#define I_DIS_MAX 60 
+
+static uint16_t counter_pp_changed = 0;
+static uint16_t counter_pp_same = 0;
+
+
+
 /*---------------------------------------------------------------------------*/
 /* Per-parent RPL information */
 NBR_TABLE(rpl_parent_t, rpl_parents);
@@ -612,7 +627,7 @@ rpl_select_dag(rpl_instance_t *instance, rpl_parent_t *p)
 
   best_dag = instance->current_dag;
   if(best_dag->rank != ROOT_RANK(instance)) {
-    if(rpl_select_parent(p->dag) != NULL) {
+    if(rpl_select_parent(last_parent, p->dag) != NULL) {
       if(p->dag != best_dag) {
         best_dag = instance->of->best_dag(best_dag, p->dag);
       }
@@ -692,7 +707,7 @@ rpl_select_dag(rpl_instance_t *instance, rpl_parent_t *p)
 }
 /*---------------------------------------------------------------------------*/
 rpl_parent_t *
-rpl_select_parent(rpl_dag_t *dag)
+rpl_select_parent(rpl_parent_t *last_preferred_parent, rpl_dag_t *dag)
 {
   rpl_parent_t *p, *best;
 
@@ -712,6 +727,19 @@ rpl_select_parent(rpl_dag_t *dag)
 
   if(best != NULL) {
     rpl_set_preferred_parent(dag, best);
+    if(last_preferred_parent != best) {
+	counter_pp_changed++;
+        if((RPL_DIS_PERIOD >= 2*I_DIS_MIN) && (counter_pp_changed >= N_DOWN_DIS)) {
+		RPL_DIS_PERIOD = RPL_DIS_PERIOD/2;
+		counter_pp_changed = 0;
+	}
+    } else {
+	counter_pp_same++;
+        if((RPL_DIS_PERIOD <= 2*I_DIS_MAX) && (counter_pp_same >= N_UP_DIS)) {
+                RPL_DIS_PERIOD = RPL_DIS_PERIOD*2;
+                counter_pp_same = 0;
+        }
+    }
   }
 
   return best;

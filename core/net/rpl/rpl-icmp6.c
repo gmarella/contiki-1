@@ -198,6 +198,8 @@ dis_output(uip_ipaddr_t *addr)
   PRINT6ADDR(addr);
   PRINTF("\n");
 
+  printf("RPL: Seding a DIS to \n");
+
   uip_icmp6_send(addr, ICMP6_RPL, RPL_CODE_DIS, 2);
 }
 /*---------------------------------------------------------------------------*/
@@ -303,7 +305,7 @@ dio_input(void)
     }
 
     PRINTF("RPL: DIO option %u, length: %u\n", subopt_type, len - 2);
-
+    printf("RPL: DIO Option: %u\n",subopt_type);
     switch(subopt_type) {
     case RPL_OPTION_DAG_METRIC_CONTAINER:
       if(len < 6) {
@@ -401,7 +403,8 @@ dio_input(void)
       break;
     case RPL_OPTION_NODE_MOBILITY:
       /*TODO: */
-      
+      dio.mobile_node = buffer[i+2];
+      printf("Gopi: Received DIO from a %d node\n",dio.mobile_node);
       break;
     default:
       PRINTF("RPL: Unsupported suboption type in DIO: %u\n",
