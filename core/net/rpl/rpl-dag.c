@@ -740,6 +740,8 @@ rpl_select_parent(rpl_parent_t *last_preferred_parent, rpl_dag_t *dag)
                 counter_pp_same = 0;
         }
     }
+    /* Gopi's change: Logging purpose*/
+    printf("RPL: Parent selected with rank %d and mobility status %d\n",best->rank, best->mobile_node);
   }
 
   return best;
