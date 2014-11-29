@@ -83,7 +83,10 @@ uint8_t RPL_DIS_PERIOD = 60;
 static uint16_t counter_pp_changed = 0;
 static uint16_t counter_pp_same = 0;
 
-
+/* Gopi's change: A macro to get the NODE Id from the IP address*/
+#define NODE_ID_FROM_ADDR(addr) ((uint8_t *)addr)[15]
+/* TODO: Gopi's change: Global value to store the preferred parent node id, to send it in DIO messages. FIXME: Default value ? */
+uint8_t parent_nodeid = 0;
 
 /*---------------------------------------------------------------------------*/
 /* Per-parent RPL information */
@@ -740,8 +743,9 @@ rpl_select_parent(rpl_parent_t *last_preferred_parent, rpl_dag_t *dag)
                 counter_pp_same = 0;
         }
     }
+    parent_nodeid = NODE_ID_FROM_ADDR(rpl_get_parent_ipaddr(best));
     /* Gopi's change: Logging purpose*/
-    printf("RPL: Parent selected with rank %d and mobility status %d\n",best->rank, best->mobile_node);
+    printf("RPL: Parent selected with rank %d, node id %d and mobility status %d\n",best->rank, parent_nodeid, best->mobile_node);
   }
 
   return best;
@@ -1154,6 +1158,9 @@ rpl_process_parent_event(rpl_instance_t *instance, rpl_parent_t *p)
   return return_value;
 }
 /*---------------------------------------------------------------------------*/
+/*TODO: Gopi's change : Not sure about node_id*/
+extern uint16_t node_id;
+
 void
 rpl_process_dio(uip_ipaddr_t *from, rpl_dio_t *dio)
 {
@@ -1164,6 +1171,11 @@ rpl_process_dio(uip_ipaddr_t *from, rpl_dio_t *dio)
   if(dio->mop != RPL_MOP_DEFAULT) {
     PRINTF("RPL: Ignoring a DIO with an unsupported MOP: %d\n", dio->mop);
     return;
+  }
+  
+  if(dio->parent_nodeid == node_id) {
+	/* Ignoring the DIO message of previous children, Avoiding loops*/
+     PRINTF("RPL: Ignoring a DIO from a child to avoid loops.\n");
   }
 
   dag = get_dag(dio->instance_id, &dio->dag_id);

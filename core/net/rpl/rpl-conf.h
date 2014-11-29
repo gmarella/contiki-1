@@ -87,10 +87,11 @@
 #define RPL_LEAF_ONLY 0
 #endif
 
-/* This valude decides whether current node is a mobile node or not
+/* TODO: Gopi's change: This valude decides whether current node is a mobile node or not
    Change this value based on explicit mobility of the node*/
 
 #define RPL_NODE_MOBILE 0
+
 /*
  * Maximum of concurent RPL instances.
  */

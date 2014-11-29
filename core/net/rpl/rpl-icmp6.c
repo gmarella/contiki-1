@@ -94,6 +94,8 @@ void RPL_DEBUG_DAO_OUTPUT(rpl_parent_t *);
 #endif
 
 extern rpl_of_t RPL_OF;
+/*TODO: Gopi's change*/
+extern uint8_t parent_nodeid;
 
 /*---------------------------------------------------------------------------*/
 static int
@@ -406,6 +408,11 @@ dio_input(void)
       dio.mobile_node = buffer[i+2];
       printf("Gopi: Received DIO from a %d node\n",dio.mobile_node);
       break;
+   case RPL_OPTION_NODE_PARENT_ID:
+      /* Gopi's change: Change the copy line once the length of the parent id variable is fixed*/
+      dio.parent_nodeid = buffer[i+2];
+      printf("Gopi: Received a DIO from a %s node whose parent ID is %d\n",dio.mobile_node ? "Mobile" : "Static", dio.parent_nodeid);
+      break;
     default:
       PRINTF("RPL: Unsupported suboption type in DIO: %u\n",
 	(unsigned)subopt_type);
@@ -546,6 +553,13 @@ dio_output(rpl_instance_t *instance, uip_ipaddr_t *uc_addr)
   buffer[pos++] = 1;
   buffer[pos++] = RPL_NODE_MOBILE;
 
+  /* TODO: Gopi's change: to send parent's node id in DIO message.
+     A global variable is used to store the preferred_parent's node id or FIXME:*/
+  buffer[pos++] = RPL_OPTION_NODE_PARENT_ID;
+  buffer[pos++] = 1;
+  buffer[pos++] = parent_nodeid;
+  /*TODO: Gopi's logging purpose, remove this*/
+  printf("RPL: Sending a DIS with parent node id %d \n",parent_nodeid);
 
 #if RPL_LEAF_ONLY
 #if (DEBUG) & DEBUG_PRINT
