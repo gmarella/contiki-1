@@ -200,7 +200,7 @@ dis_output(uip_ipaddr_t *addr)
   PRINT6ADDR(addr);
   PRINTF("\n");
 
-  printf("RPL: Seding a DIS to \n");
+  printf("RPL: Sending a DIS to \n");
 
   uip_icmp6_send(addr, ICMP6_RPL, RPL_CODE_DIS, 2);
 }
@@ -405,8 +405,10 @@ dio_input(void)
       break;
     case RPL_OPTION_NODE_MOBILITY:
       /*TODO: */
+      #if RPL_DYNAMIC_DIS
       dio.mobile_node = buffer[i+2];
       printf("Gopi: Received DIO from a %d node\n",dio.mobile_node);
+      #endif 
       break;
    case RPL_OPTION_NODE_PARENT_ID:
       /* Gopi's change: Change the copy line once the length of the parent id variable is fixed*/
@@ -548,10 +550,12 @@ dio_output(rpl_instance_t *instance, uip_ipaddr_t *uc_addr)
            dag->prefix_info.length);
   }
 
+#if RPL_DYNAMIC_DIS
   /*TODO:Gopi's code change to add Mobility information as an option*/
   buffer[pos++] = RPL_OPTION_NODE_MOBILITY;
   buffer[pos++] = 1;
   buffer[pos++] = RPL_NODE_MOBILE;
+#endif
 
   /* TODO: Gopi's change: to send parent's node id in DIO message.
      A global variable is used to store the preferred_parent's node id or FIXME:*/

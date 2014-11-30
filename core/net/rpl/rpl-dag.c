@@ -72,6 +72,7 @@ static rpl_of_t * const objective_functions[] = {&RPL_OF};
 
 
 /*TODO: Gopi's changes for Dynamic DIS management*/
+#if RPL_DYNAMIC_DIS
 uint8_t RPL_DIS_PERIOD = 60;
 /* The number of times that PP(prefrred parent) must change so that DIS = DIS/2 */
 #define N_DOWN_DIS 1
@@ -79,6 +80,7 @@ uint8_t RPL_DIS_PERIOD = 60;
 #define N_UP_DIS 5
 #define I_DIS_MIN 3 
 #define I_DIS_MAX 60 
+#endif
 
 static uint16_t counter_pp_changed = 0;
 static uint16_t counter_pp_same = 0;
@@ -567,7 +569,9 @@ rpl_add_parent(rpl_dag_t *dag, rpl_dio_t *dio, uip_ipaddr_t *addr)
     p->rank = dio->rank;
     p->dtsn = dio->dtsn;
 /*TODO:Gopi's code change to support mobile node information in PP selection process*/
+    #if RPL_DYNAMIC_DIS
     p->mobile_node = dio->mobile_node;
+    #endif 
     p->link_metric = RPL_INIT_LINK_METRIC * RPL_DAG_MC_ETX_DIVISOR;
 #if RPL_DAG_MC != RPL_DAG_MC_NONE
     memcpy(&p->mc, &dio->mc, sizeof(p->mc));
@@ -730,6 +734,7 @@ rpl_select_parent(rpl_parent_t *last_preferred_parent, rpl_dag_t *dag)
 
   if(best != NULL) {
     rpl_set_preferred_parent(dag, best);
+#define RPL_DYNAMIC_DIS
     if(last_preferred_parent != best) {
 	counter_pp_changed++;
         if((RPL_DIS_PERIOD >= 2*I_DIS_MIN) && (counter_pp_changed >= N_DOWN_DIS)) {
@@ -746,6 +751,7 @@ rpl_select_parent(rpl_parent_t *last_preferred_parent, rpl_dag_t *dag)
     parent_nodeid = NODE_ID_FROM_ADDR(rpl_get_parent_ipaddr(best));
     /* Gopi's change: Logging purpose*/
     printf("RPL: Parent selected with rank %d, node id %d and mobility status %d\n",best->rank, parent_nodeid, best->mobile_node);
+#endif
   }
 
   return best;

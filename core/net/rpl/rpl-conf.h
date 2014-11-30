@@ -89,8 +89,12 @@
 
 /* TODO: Gopi's change: This valude decides whether current node is a mobile node or not
    Change this value based on explicit mobility of the node*/
-
 #define RPL_NODE_MOBILE 0
+
+/* Global parameter to enable DYNAMIC DIS Management */
+#ifndef RPL_DYNAMIC_DIS 
+#define RPL_DYNAMIC_DIS 1
+#endif
 
 /*
  * Maximum of concurent RPL instances.
