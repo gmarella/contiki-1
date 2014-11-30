@@ -192,7 +192,7 @@ best_parent(rpl_parent_t *p1, rpl_parent_t *p2)
 
   p1_metric = calculate_path_metric(p1);
   p2_metric = calculate_path_metric(p2);
-
+#if RPL_DYNAMIC_DIS
   /* Maintain stability of the preferred parent in case of similar ranks. */
   if((p1 == dag->preferred_parent || p2 == dag->preferred_parent) 
 	&& (p1_metric < p2_metric + min_diff && p1_metric > p2_metric - min_diff)) {
@@ -211,8 +211,21 @@ best_parent(rpl_parent_t *p1, rpl_parent_t *p2)
 	return p1_metric < p2_metric ? p1 : p2;
     }
   }
+#else
+  /* Maintain stability of the preferred parent in case of similar ranks. */
+  if(p1 == dag->preferred_parent || p2 == dag->preferred_parent) {
+    if(p1_metric < p2_metric + min_diff &&
+       p1_metric > p2_metric - min_diff) {
+      PRINTF("RPL: MRHOF hysteresis: %u <= %u <= %u\n",
+             p2_metric - min_diff,
+             p1_metric,
+             p2_metric + min_diff);
+      return dag->preferred_parent;
+    }
+  }
 
-  //return p1_metric < p2_metric ? p1 : p2;
+  return p1_metric < p2_metric ? p1 : p2;
+#endif
 }
 
 #if RPL_DAG_MC == RPL_DAG_MC_NONE

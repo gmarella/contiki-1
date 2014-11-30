@@ -62,7 +62,9 @@ static uint16_t next_dis;
 static uint8_t dio_send_ok;
 
 /*TODO: Gopi's change*/
+#if RPL_DYNAMIC_DIS
 extern uint16_t RPL_DIS_PERIOD;
+#endif
 
 /*---------------------------------------------------------------------------*/
 static void
@@ -74,7 +76,11 @@ handle_periodic_timer(void *ptr)
   /* handle DIS */
 #ifdef RPL_DIS_SEND
   next_dis++;
+#if RPL_DYNAMIC_DIS
   if(rpl_get_any_dag() == NULL && next_dis >= RPL_DIS_PERIOD) {
+#else
+  if(rpl_get_any_dag() == NULL && next_dis >= RPL_DIS_INTERVAL) {
+#endif
     next_dis = 0;
     dis_output(NULL);
   }
@@ -176,7 +182,6 @@ rpl_reset_periodic_timer(void)
   next_dis = RPL_DIS_INTERVAL / 2 +
     ((uint32_t)RPL_DIS_INTERVAL * (uint32_t)random_rand()) / RANDOM_RAND_MAX -
     RPL_DIS_START_DELAY;
- printf("Clock_Seconfd value %d\n",(int )CLOCK_SECOND);
   ctimer_set(&periodic_timer, CLOCK_SECOND, handle_periodic_timer, NULL);
 }
 /*---------------------------------------------------------------------------*/

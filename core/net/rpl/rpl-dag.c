@@ -734,7 +734,7 @@ rpl_select_parent(rpl_parent_t *last_preferred_parent, rpl_dag_t *dag)
 
   if(best != NULL) {
     rpl_set_preferred_parent(dag, best);
-#define RPL_DYNAMIC_DIS
+#if RPL_DYNAMIC_DIS
     if(last_preferred_parent != best) {
 	counter_pp_changed++;
         if((RPL_DIS_PERIOD >= 2*I_DIS_MIN) && (counter_pp_changed >= N_DOWN_DIS)) {

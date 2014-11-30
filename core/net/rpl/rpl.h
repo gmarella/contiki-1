@@ -118,7 +118,9 @@ struct rpl_parent {
   uint8_t dtsn;
   uint8_t updated;
   /*TODO: Gopi's change to indicate whether a parent is mobile or not*/
+#if RPL_DYNAMIC_DIS
   uint8_t mobile_node;
+#endif
 };
 typedef struct rpl_parent rpl_parent_t;
 /*---------------------------------------------------------------------------*/

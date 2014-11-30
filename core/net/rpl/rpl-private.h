@@ -240,7 +240,9 @@ struct rpl_dio {
   rpl_prefix_t prefix_info;
   struct rpl_metric_container mc;
 /* TODO: Gopi's change: Variables to store the mobility status and parent node id of the DIO message sender*/
+#if RPL_DYNAMIC_DIS
   uint8_t mobile_node;
+#endif
   uint8_t parent_nodeid;
 };
 typedef struct rpl_dio rpl_dio_t;
