@@ -71,21 +71,22 @@ static rpl_of_t * const objective_functions[] = {&RPL_OF};
 #endif /* !RPL_CONF_GROUNDED */
 
 
-/*TODO: Gopi's changes for Dynamic DIS management*/
+/*TODO:652 Changes for Dynamic DIS management*/
 #if RPL_DYNAMIC_DIS
-uint8_t RPL_DIS_PERIOD = 60;
+uint8_t RPL_DIS_PERIOD = 20;
 /* The number of times that PP(prefrred parent) must change so that DIS = DIS/2 */
 #define N_DOWN_DIS 1
 /*The number of times that PP(Preferred parent) must change so that DIS = DIS*2 */
 #define N_UP_DIS 5
 #define I_DIS_MIN 3 
 #define I_DIS_MAX 60 
-#endif
 
+/* Counters to support Dynamic DIS management*/
 static uint16_t counter_pp_changed = 0;
 static uint16_t counter_pp_same = 0;
+#endif
 
-/* Gopi's change: A macro to get the NODE Id from the IP address*/
+/* TODO:652, DIS: A macro to get the NODE Id from the IP address*/
 #define NODE_ID_FROM_ADDR(addr) ((uint8_t *)addr)[15]
 /* TODO: Gopi's change: Global value to store the preferred parent node id, to send it in DIO messages. FIXME: Default value ? */
 uint8_t parent_nodeid = 0;
@@ -138,18 +139,25 @@ rpl_set_preferred_parent(rpl_dag_t *dag, rpl_parent_t *p)
 {
   if(dag != NULL && dag->preferred_parent != p) {
     PRINTF("RPL: rpl_set_preferred_parent ");
+    printf("RPL: rpl_set_preferred_parent ");
     if(p != NULL) {
       PRINT6ADDR(rpl_get_parent_ipaddr(p));
+      printf("%d", NODE_ID_FROM_ADDR(rpl_get_parent_ipaddr(p)));
     } else {
       PRINTF("NULL");
+      printf("NULL");
     }
     PRINTF(" used to be ");
+    printf(" used to be ");
     if(dag->preferred_parent != NULL) {
       PRINT6ADDR(rpl_get_parent_ipaddr(dag->preferred_parent));
+      printf("%d", NODE_ID_FROM_ADDR(rpl_get_parent_ipaddr(dag->preferred_parent)));
     } else {
       PRINTF("NULL");
+      printf("NULL");
     }
     PRINTF("\n");
+    printf("\n");
 
     /* Always keep the preferred parent locked, so it remains in the
      * neighbor table. */
@@ -738,19 +746,21 @@ rpl_select_parent(rpl_parent_t *last_preferred_parent, rpl_dag_t *dag)
     if(last_preferred_parent != best) {
 	counter_pp_changed++;
         if((RPL_DIS_PERIOD >= 2*I_DIS_MIN) && (counter_pp_changed >= N_DOWN_DIS)) {
+                printf("DYNAMICRPL: DIS dynamic period is reduced to half : From %d to %d\n",RPL_DIS_PERIOD,RPL_DIS_PERIOD/2);
 		RPL_DIS_PERIOD = RPL_DIS_PERIOD/2;
 		counter_pp_changed = 0;
 	}
     } else {
 	counter_pp_same++;
-        if((RPL_DIS_PERIOD <= 2*I_DIS_MAX) && (counter_pp_same >= N_UP_DIS)) {
+        if((2*RPL_DIS_PERIOD <= I_DIS_MAX) && (counter_pp_same >= N_UP_DIS)) {
                 RPL_DIS_PERIOD = RPL_DIS_PERIOD*2;
+                printf("DYNAMICRPL: DIS dynamic period is doubled : From %d to %d\n",RPL_DIS_PERIOD,RPL_DIS_PERIOD*2);
                 counter_pp_same = 0;
         }
     }
     parent_nodeid = NODE_ID_FROM_ADDR(rpl_get_parent_ipaddr(best));
     /* Gopi's change: Logging purpose*/
-    printf("RPL: Parent selected with rank %d, node id %d and mobility status %d\n",best->rank, parent_nodeid, best->mobile_node);
+    printf("DYNAMICRPL: Parent selected with  Rank %d, Nodeid %d and mobility_status %s\n",best->rank, parent_nodeid, best->mobile_node ? "Mobile" : "Static");
 #endif
   }
 
@@ -1182,6 +1192,7 @@ rpl_process_dio(uip_ipaddr_t *from, rpl_dio_t *dio)
   if(dio->parent_nodeid == node_id) {
 	/* Ignoring the DIO message of previous children, Avoiding loops*/
      PRINTF("RPL: Ignoring a DIO from a child to avoid loops.\n");
+     printf("RPL: Ignoring a DIO from a child to avoid loops.\n");
   }
 
   dag = get_dag(dio->instance_id, &dio->dag_id);

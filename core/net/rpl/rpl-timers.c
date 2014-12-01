@@ -77,6 +77,7 @@ handle_periodic_timer(void *ptr)
 #ifdef RPL_DIS_SEND
   next_dis++;
 #if RPL_DYNAMIC_DIS
+/*FIXME:652 : Change this logic, to send DIS messages in a more efficient way*/
   if(rpl_get_any_dag() == NULL && next_dis >= RPL_DIS_PERIOD) {
 #else
   if(rpl_get_any_dag() == NULL && next_dis >= RPL_DIS_INTERVAL) {

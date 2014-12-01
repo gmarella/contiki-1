@@ -156,6 +156,8 @@ dis_input(void)
   PRINTF("RPL: Received a DIS from ");
   PRINT6ADDR(&UIP_IP_BUF->srcipaddr);
   PRINTF("\n");
+  /*TODO:652 Logging purpose*/
+  printf("RPL: Received a DIS from %d.\n",((uint8_t *)(&UIP_IP_BUF->srcipaddr))[15]);
 
   for(instance = &instance_table[0], end = instance + RPL_MAX_INSTANCES; instance < end; ++instance) {
     if(instance->used == 1) {
@@ -199,8 +201,8 @@ dis_output(uip_ipaddr_t *addr)
   PRINTF("RPL: Sending a DIS to ");
   PRINT6ADDR(addr);
   PRINTF("\n");
-
-  printf("RPL: Sending a DIS to \n");
+  /*TODO:652 Logging purpose*/
+  printf("RPL: Sending a DIS to %d.\n", ((uint8_t *)addr)[15]);
 
   uip_icmp6_send(addr, ICMP6_RPL, RPL_CODE_DIS, 2);
 }
@@ -407,13 +409,12 @@ dio_input(void)
       /*TODO: */
       #if RPL_DYNAMIC_DIS
       dio.mobile_node = buffer[i+2];
-      printf("Gopi: Received DIO from a %d node\n",dio.mobile_node);
       #endif 
       break;
    case RPL_OPTION_NODE_PARENT_ID:
       /* Gopi's change: Change the copy line once the length of the parent id variable is fixed*/
       dio.parent_nodeid = buffer[i+2];
-      printf("Gopi: Received a DIO from a %s node whose parent ID is %d\n",dio.mobile_node ? "Mobile" : "Static", dio.parent_nodeid);
+      printf("RPL: Received a DIO from a %s node whose parent ID is %d\n",dio.mobile_node ? "Mobile" : "Static", dio.parent_nodeid);
       break;
     default:
       PRINTF("RPL: Unsupported suboption type in DIO: %u\n",
@@ -563,7 +564,7 @@ dio_output(rpl_instance_t *instance, uip_ipaddr_t *uc_addr)
   buffer[pos++] = 1;
   buffer[pos++] = parent_nodeid;
   /*TODO: Gopi's logging purpose, remove this*/
-  printf("RPL: Sending a DIS with parent node id %d \n",parent_nodeid);
+  printf("RPL: Sending a DIO with parent node id %d \n",parent_nodeid);
 
 #if RPL_LEAF_ONLY
 #if (DEBUG) & DEBUG_PRINT
