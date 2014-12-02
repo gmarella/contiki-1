@@ -719,6 +719,8 @@ rpl_select_dag(rpl_instance_t *instance, rpl_parent_t *p)
   } else if(best_dag->rank != old_rank) {
     PRINTF("RPL: Preferred parent update, rank changed from %u to %u\n",
   	(unsigned)old_rank, best_dag->rank);
+    /*TODO: 652, send a DIO message even there is a change in the rank*/
+    dio_output(instance, NULL);
   }
   return best_dag;
 }
