@@ -26,7 +26,9 @@
  * This file is part of the Contiki operating system.
  *
  */
-
+/*Code Change: Pratyush*/
+#include "powertrace.h"
+/*Code Change Ends*/
 #include "contiki.h"
 #include "contiki-lib.h"
 #include "contiki-net.h"
@@ -102,7 +104,9 @@ PROCESS_THREAD(udp_server_process, ev, data)
   struct uip_ds6_addr *root_if;
 
   PROCESS_BEGIN();
-
+  /*Code Change: Pratyush*/
+  powertrace_start(CLOCK_SECOND * 2);
+  /*Code Change Ends*/
   PROCESS_PAUSE();
 
   SENSORS_ACTIVATE(button_sensor);

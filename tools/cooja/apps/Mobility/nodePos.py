@@ -23,13 +23,13 @@ nodePosXList = []
 nodePosYList = []
 
 #======= Simulation Params ======
-totSimTime = 100.0; #secs
-numNodes = 1; #nodes
-maxDimX = 150.0; #Maximum X-size [m]
-maxDimY = 150.0; #Maximum Y-size [m]
+totSimTime = 300.0; #secs
+numNodes = 6; #nodes
+maxDimX = 20.0; #Maximum X-size [m]
+maxDimY = 20.0; #Maximum Y-size [m]
 
-minSpeed = 2.0; # Min speed [m/s]
-maxSpeed = 10.0; # Max speed [m/s]
+minSpeed = 5.0; # Min speed [m/s]
+maxSpeed = 50.0; # Max speed [m/s]
 timeStep = 0.2; #[s]
 
 maxTheta = 2*(math.pi);
@@ -85,7 +85,7 @@ time = 0.0;
 for nodePosXrow, nodePosYrow in zip(nodePosXList, nodePosYList):
   nodeNo = 0;
   for nodePosX,nodePosY in zip(nodePosXrow, nodePosYrow):
-      strToWrt = str(nodeNo)+" "+str(time)+" "+str(nodePosX)+" "+str(nodePosY)+"\n";
+      strToWrt = str(nodeNo+1)+" "+str(time)+" "+str(nodePosX)+" "+str(nodePosY)+"\n";
       nodeNo = nodeNo + 1;
       opFile.write(strToWrt);
   time = time + timeStep

@@ -27,6 +27,9 @@
  *
  */
 
+/*Code Change: Pratyush*/
+#include "powertrace.h"
+/*Code Change Ends*/
 #include "contiki.h"
 #include "lib/random.h"
 #include "sys/ctimer.h"
@@ -49,7 +52,7 @@
 #include "net/uip-debug.h"
 
 #ifndef PERIOD
-#define PERIOD 60
+#define PERIOD 1
 #endif
 
 #define START_INTERVAL		(15 * CLOCK_SECOND)
@@ -152,7 +155,9 @@ PROCESS_THREAD(udp_client_process, ev, data)
 #endif
 
   PROCESS_BEGIN();
-
+  /*Code Change: Pratyush*/
+  powertrace_start(CLOCK_SECOND * 2);
+  /*Code Change Ends*/
   PROCESS_PAUSE();
 
   set_global_address();
