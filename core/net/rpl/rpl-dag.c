@@ -713,6 +713,8 @@ rpl_select_dag(rpl_instance_t *instance, rpl_parent_t *p)
       RPL_LOLLIPOP_INCREMENT(instance->dtsn_out);
       rpl_schedule_dao(instance);
     }
+    /* New parent is selected, Don't wait for the DIO interval, send a DIO message immediately.TODO:652*/
+    dio_output(instance, NULL);
     rpl_reset_dio_timer(instance);
   } else if(best_dag->rank != old_rank) {
     PRINTF("RPL: Preferred parent update, rank changed from %u to %u\n",
