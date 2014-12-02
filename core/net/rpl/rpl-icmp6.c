@@ -414,7 +414,11 @@ dio_input(void)
    case RPL_OPTION_NODE_PARENT_ID:
       /* Gopi's change: Change the copy line once the length of the parent id variable is fixed*/
       dio.parent_nodeid = buffer[i+2];
+      #if RPL_DYNAMIC_DIS
       printf("RPL: Received a DIO from a %s node whose parent ID is %d\n",dio.mobile_node ? "Mobile" : "Static", dio.parent_nodeid);
+      #else
+       printf("RPL: Received a DIO from a node whose parent ID is %d\n",dio.parent_nodeid);
+      #endif
       break;
     default:
       PRINTF("RPL: Unsupported suboption type in DIO: %u\n",

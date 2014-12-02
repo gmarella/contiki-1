@@ -93,7 +93,7 @@
 
 /* Global parameter to enable DYNAMIC DIS Management */
 #ifndef RPL_DYNAMIC_DIS 
-#define RPL_DYNAMIC_DIS 1
+#define RPL_DYNAMIC_DIS 0
 #endif
 
 /*
