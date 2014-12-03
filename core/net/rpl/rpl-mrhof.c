@@ -194,23 +194,23 @@ best_parent(rpl_parent_t *p1, rpl_parent_t *p2)
   p2_metric = calculate_path_metric(p2);
 #if RPL_DYNAMIC_DIS
   /* Maintain stability of the preferred parent in case of similar ranks. */
-  if((p1 == dag->preferred_parent || p2 == dag->preferred_parent) 
-	&& (p1_metric < p2_metric + min_diff && p1_metric > p2_metric - min_diff)) {
-    /* One of the parents is preferred_parent*/
-      /* Check the mobility status of the parents, fixed node is preferred as parent*/
-	if(p1->mobile_node != p2->mobile_node) {
-		return p1->mobile_node ? p2 : p1;
-	} else {
-	      return dag->preferred_parent;
-	}
-  } else {
-    if(p1->mobile_node != p2->mobile_node) {
+  if((p1 == dag->preferred_parent || p2 == dag->preferred_parent)) { 
+	if( p1_metric < p2_metric + min_diff && p1_metric > p2_metric - min_diff) {
+		/*Ranks are almost same*/
+		if(p1->mobile_node != p2->mobile_node) {
+			return p1->mobile_node ? p2 : p1;
+		} else {
+		      return dag->preferred_parent;
+		}
+  	}
+   }
+	/*Ranks are not same */
+  if(p1->mobile_node != p2->mobile_node) {
 	/* One is mobile and other one is static. We are returning static node withour comparing ranks. FIXME:*/
-        return p1->mobile_node ? p2 : p1;
-    } else {
+	return p1->mobile_node ? p2 : p1;
+   } else {
 	return p1_metric < p2_metric ? p1 : p2;
-    }
-  }
+   }
 #else
   /* Maintain stability of the preferred parent in case of similar ranks. */
   if(p1 == dag->preferred_parent || p2 == dag->preferred_parent) {

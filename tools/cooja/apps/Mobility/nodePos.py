@@ -34,11 +34,11 @@ nodeSpeedAccRateList = []
 nodeSpeedDecRateList = []
 #============================= Simulation Params ============================
 totSimTime = 60.0; #secs
-numNodes = 6; #nodes, for GRID topology no: of nodes must be perfect square!
+numNodes = 20; #nodes, for GRID topology no: of nodes must be perfect square!
 maxDimX = 60.0; #Maximum X-size [m]
 maxDimY = 60.0; #Maximum Y-size [m]
 
-isInitialTopology = 2; # 1-RANDOM, 2-GRID, 3-UNIFORM
+isInitialTopology = 1; # 1-RANDOM, 2-GRID, 3-UNIFORM
 gridUnit = 4; #Unit of the grid in (m) only required for GRID topology
 #Flag to control the speed assignments to the nodes
 isNodeSpeedType = 1; # 1-Random speeds, 2-Individual speeds

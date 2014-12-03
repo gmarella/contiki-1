@@ -167,6 +167,10 @@ dis_input(void)
 #else /* !RPL_LEAF_ONLY */
       if(uip_is_addr_mcast(&UIP_IP_BUF->destipaddr)) {
         PRINTF("RPL: Multicast DIS => reset DIO timer\n");
+        #if RPL_DYNAMIC_DIS
+        /*TODO:652: send a dio immediately than waiting for timer*/
+        dio_output(instance, NULL);
+        #endif
         rpl_reset_dio_timer(instance);
       } else {
 #endif /* !RPL_LEAF_ONLY */
